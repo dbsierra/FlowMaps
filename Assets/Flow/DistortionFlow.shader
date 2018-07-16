@@ -2,7 +2,10 @@
 {
     Properties
     {
+        [HDR]
         _Color("Color", Color) = (1,1,1,1)
+        [HDR]
+        _Color2("Color 2", Color) = (1,1,1,1)
         _MainTex("Albedo (RGB)", 2D) = "white" {}
         _Tiling("Tiling", Float) = 1
         _Speed("Speed", Float) = 1
@@ -40,7 +43,7 @@
         float _UJump, _VJump, _Tiling, _Speed, _FlowStrength, _FlowOffset, _HeightScale;
         half _Glossiness;
         half _Metallic;
-        fixed4 _Color;
+        float4 _Color, _Color2;
 
         void surf(Input IN, inout SurfaceOutputStandard o) 
         {
@@ -59,7 +62,7 @@
             fixed4 texA = tex2D(_MainTex, uvwA.xy) * uvwA.z;
             fixed4 texB = tex2D(_MainTex, uvwB.xy) * uvwB.z;
 
-            fixed4 c = (texA + texB) * _Color;
+            fixed4 c = (texA + texB) * lerp(_Color, _Color2, tex2D(_FlowMap, IN.uv_MainTex).r);
 
             float3 normalA = UnpackNormal(tex2D(_NormalMap, uvwA.xy)) * uvwA.z;
             float3 normalB = UnpackNormal(tex2D(_NormalMap, uvwB.xy)) * uvwB.z;
