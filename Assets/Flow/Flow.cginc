@@ -1,7 +1,7 @@
 ﻿#if !defined(FLOW_INCLUDED)
 #define FLOW_INCLUDED
 
-float3 FlowUVW(float2 uv, float2 flowVector, float2 jump, float tiling, float time, bool flowB)
+float3 FlowUVW(float2 uv, float2 flowVector, float2 jump, float flowOffset, float tiling, float time, bool flowB)
 {
     float phaseOffset = flowB ? 0.5 : 0;
 
@@ -11,7 +11,7 @@ float3 FlowUVW(float2 uv, float2 flowVector, float2 jump, float tiling, float ti
     float progress = frac(time + phaseOffset);
 
     // UV offsets based on flow map, animated with sawtooth wave
-    uvw.xy = uv - flowVector * progress;
+    uvw.xy = uv - flowVector * (progress + flowOffset);
     uvw.xy *= tiling;
 
     // 
@@ -24,6 +24,12 @@ float3 FlowUVW(float2 uv, float2 flowVector, float2 jump, float tiling, float ti
     uvw.z = 1 - abs(1 - 2 * progress);
 
     return uvw;
+}
+
+float3 UnpackDerivativeHeight(float4 textureData) {
+    float3 dh = textureData.agb;
+    dh.xy = dh.xy * 2 - 1;
+    return dh;
 }
 
 #endif
